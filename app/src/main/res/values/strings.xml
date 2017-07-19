@@ -34,4 +34,19 @@
     <string name="cancel">Cancel</string>
     <string name="editor_delete_game_failed">Error with deleting game</string>
     <string name="editor_delete_game_successful">Game deleted</string>
+    <string name="action_save">save</string>
+    <string name="action_delete">delete</string>
+    <string name="action_insert_dummy_data">Insert Dummy data</string>
+    <string name="action_delete_all_entries">Delete All Games</string>
+    <string name="genre_adventure">ADVENTURE</string>
+    <string name="genre_shooting">SHOOTING</string>
+    <string name="genre_sport">SPORT</string>
+    <string name="genre_action">ACTION</string>
+    <string name="genre_sci_fi">SCI-FI</string>
+    <string name="genre_unknown">UNKNOWN</string>
+    <string name="console_unknown">UNKNOWN</string>
+    <string name="console_ps">PS</string>
+    <string name="console_ps1">PS1</string>
+    <string name="console_ps2">PS2</string>
+    <string name="console_ps3">PS3</string>
 </resources>

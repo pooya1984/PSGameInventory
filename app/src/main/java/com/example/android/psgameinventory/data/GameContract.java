@@ -39,7 +39,7 @@ public final class GameContract {
 
         public final static String COLUMN_GAME_NAME ="name";
 
-        public final static String COLUMN_GAME_STOCK = "stock";
+        public final static String COLUMN_GAME_STOCK = "quantity";
 
         /**
          * Gender of the console.

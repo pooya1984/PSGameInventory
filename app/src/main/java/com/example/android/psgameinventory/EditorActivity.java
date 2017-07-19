@@ -21,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.example.android.psgameinventory.data.GameContract.GameEntry;
@@ -98,7 +97,7 @@ public class EditorActivity extends AppCompatActivity implements
         ArrayAdapter genreSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.array_genre_options, android.R.layout.simple_spinner_item);
         ArrayAdapter consoleSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.array_genre_options, android.R.layout.simple_spinner_item);
+                R.array.array_console_options, android.R.layout.simple_spinner_item);
 
         genreSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         consoleSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -160,13 +159,13 @@ public class EditorActivity extends AppCompatActivity implements
     }
 
 
-    private void savePet() {
+    private void saveGame() {
         String nameString = mNameEditText.getText().toString().trim();
         String quantityString = mQuantityEditText.getText().toString().trim();
 
         if (mCurrentGAMEUri == null &&
-                TextUtils.isEmpty(nameString) && mGenre == GameEntry.GENRE_UNKNOWN &&
-                TextUtils.isEmpty(quantityString) && mConsole == GameEntry.CONSOLE_UNKNOWN) {
+                TextUtils.isEmpty(nameString) && TextUtils.isEmpty(quantityString)&&
+                mGenre == GameEntry.GENRE_UNKNOWN  && mConsole == GameEntry.CONSOLE_UNKNOWN) {
             return;
         }
 
@@ -310,9 +309,7 @@ public class EditorActivity extends AppCompatActivity implements
             mNameEditText.setText(name);
             mQuantityEditText.setText(Integer.toString(quantity));
 
-            // Gender is a dropdown spinner, so map the constant value from the database
-            // into one of the dropdown options (0 is Unknown, 1 is Male, 2 is Female).
-            // Then call setSelection() so that option is displayed on screen as the current selection.
+
             switch (console) {
                 case GameEntry.CONSOLE_PS:
                     mConsoleSpinner.setSelection(1);

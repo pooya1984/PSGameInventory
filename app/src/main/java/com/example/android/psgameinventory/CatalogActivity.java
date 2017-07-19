@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.example.android.psgameinventory.data.GameContract.GameEntry;
@@ -34,7 +35,7 @@ public class CatalogActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_catalog);
 
         // Setup FAB to open EditorActivity
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        ImageButton fab = (ImageButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -42,6 +43,7 @@ public class CatalogActivity extends AppCompatActivity implements
                 startActivity(intent);
             }
         });
+
 
         ListView gameListView = (ListView) findViewById(R.id.list);
 
@@ -65,7 +67,7 @@ public class CatalogActivity extends AppCompatActivity implements
         getLoaderManager().initLoader(GAME_LOADER, null, this);
     }
 
-    private void insertPet() {
+    private void insertGame() {
 
         ContentValues values = new ContentValues();
         values.put(GameEntry.COLUMN_GAME_NAME, "The Last Of Us");
@@ -75,17 +77,42 @@ public class CatalogActivity extends AppCompatActivity implements
 
         Uri newUri = getContentResolver().insert(GameEntry.CONTENT_URI, values);
     }
-    private void deleteAllPets() {
+    private void deleteAllGames() {
         int rowsDeleted = getContentResolver().delete(GameEntry.CONTENT_URI, null, null);
         Log.v("CatalogActivity", rowsDeleted + " rows deleted from game database");
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu options from the res/menu/menu_catalog.xml file.
+        // This adds menu items to the app bar.
+        getMenuInflater().inflate(R.menu.menu_catalog, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // User clicked on a menu option in the app bar overflow menu
+        switch (item.getItemId()) {
+            // Respond to a click on the "Insert dummy data" menu option
+            case R.id.action_insert_dummy_data:
+                insertGame();
+                return true;
+            // Respond to a click on the "Delete all entries" menu option
+            case R.id.action_delete_all_entries:
+                deleteAllGames();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // Define a projection that specifies the columns from the table we care about.
         String[] projection = {
                 GameEntry._ID,
+                GameEntry.COLUMN_GAME_CONSOLE,
+                GameEntry.COLUMN_GAME_GENRE,
                 GameEntry.COLUMN_GAME_NAME,
                 GameEntry.COLUMN_GAME_STOCK };
 
