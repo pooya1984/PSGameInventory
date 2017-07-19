@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">PS Game Inventory</string>
+    <string name="empty_view_title_text">Inventory is empty</string>
+    <string name="empty_view_subtitle_text">Get started by adding a game</string>
+    <string name="category_overview">over view</string>
+    <string name="hint_game_name">Name of game</string>
+    <string name="hint_ps_genre">choose genre</string>
+    <string name="category_genre">choose genre</string>
+    <string name="category_console">choose console</string>
+    <string name="category_quantity">quantity</string>
+    <string name="hint_game_in_stock">game in stock</string>
+    <string name="unknown_stock">no quantity</string>
+    <string name="editor_activity_title_new_game">add a game</string>
+    <string name="editor_activity_title_edit_game">Edit Game</string>
+    <string name="SCI_FI">SCI-FI</string>
+    <string name="ACTION">ACTION</string>
+    <string name="SPORT">SPORT</string>
+    <string name="ADVENTURE">ADVENTURE</string>
+    <string name="SHOOTING">SHOOTING</string>
+</resources>
