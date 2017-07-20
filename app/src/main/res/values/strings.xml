@@ -53,4 +53,5 @@
     <string name="hint_game_price">Insert Price</string>
     <string name="unknown_Price">no price</string>
     <string name="USD">usd</string>
+    <string name="sci_fi">SCI-FI</string>
 </resources>
