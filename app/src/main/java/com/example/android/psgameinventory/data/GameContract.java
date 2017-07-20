@@ -45,31 +45,8 @@ public final class GameContract {
          * Gender of the console.
          * Type: INTEGER
          */
-        public final static String COLUMN_GAME_CONSOLE = "console";
         public final static String COLUMN_GAME_GENRE = "genre";
-
-        /**
-         * Possible values for the CONSOLE of the GAME.
-         */
-        public static final int CONSOLE_UNKNOWN = 0;
-        public static final int CONSOLE_PS = 1;
-        public static final int CONSOLE_PS1 = 2;
-        public static final int CONSOLE_PS2 = 3;
-        public static final int CONSOLE_PS3 = 4;
-        public static final int CONSOLE_PS4 = 5;
-
-
-        public static boolean isValidConsole(int console) {
-            if (console == CONSOLE_UNKNOWN ||
-                console == CONSOLE_PS ||
-                console == CONSOLE_PS1 ||
-                console == CONSOLE_PS2 ||
-                console == CONSOLE_PS3 ||
-                console == CONSOLE_PS4) {
-                return true;
-            }
-            return false;
-        }
+        public final static String COLUMN_GAME_CONSOLE = "console";
 
         /**
          * Possible values for the GENRE of the GAME.
@@ -89,6 +66,29 @@ public final class GameContract {
                     genre == GENRE_SPORT ||
                     genre == GENRE_ADVENTURE ||
                     genre == GENRE_SHOOTING) {
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * Possible values for the CONSOLE of the GAME.
+         */
+        public static final int CONSOLE_UNKNOWN = 0;
+        public static final int CONSOLE_PS = 1;
+        public static final int CONSOLE_PS1 = 2;
+        public static final int CONSOLE_PS2 = 3;
+        public static final int CONSOLE_PS3 = 4;
+        public static final int CONSOLE_PS4 = 5;
+
+
+        public static boolean isValidConsole(int console) {
+            if (console == CONSOLE_UNKNOWN ||
+                    console == CONSOLE_PS ||
+                    console == CONSOLE_PS1 ||
+                    console == CONSOLE_PS2 ||
+                    console == CONSOLE_PS3 ||
+                    console == CONSOLE_PS4) {
                 return true;
             }
             return false;

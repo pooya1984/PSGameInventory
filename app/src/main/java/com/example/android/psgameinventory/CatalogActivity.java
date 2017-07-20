@@ -44,7 +44,6 @@ public class CatalogActivity extends AppCompatActivity implements
             }
         });
 
-
         ListView gameListView = (ListView) findViewById(R.id.list);
 
         View emptyView = findViewById(R.id.empty_view);
@@ -68,12 +67,11 @@ public class CatalogActivity extends AppCompatActivity implements
     }
 
     private void insertGame() {
-
         ContentValues values = new ContentValues();
         values.put(GameEntry.COLUMN_GAME_NAME, "The Last Of Us");
+        values.put(GameEntry.COLUMN_GAME_STOCK, 7);
         values.put(GameEntry.COLUMN_GAME_GENRE,GameEntry.GENRE_ADVENTURE);
         values.put(GameEntry.COLUMN_GAME_CONSOLE, GameEntry.CONSOLE_PS4);
-        values.put(GameEntry.COLUMN_GAME_STOCK, 7);
 
         Uri newUri = getContentResolver().insert(GameEntry.CONTENT_URI, values);
     }
@@ -135,7 +133,4 @@ public class CatalogActivity extends AppCompatActivity implements
     public void onLoaderReset(Loader<Cursor> loader) {
         // Callback called when the data needs to be deleted
         mCursorAdapter.swapCursor(null);
-    }
-
-
-}
+    }}

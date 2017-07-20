@@ -16,7 +16,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EditorActivity"></activity>
-    </application>
 
+        <activity android:name=".EditorActivity"></activity>
+
+        <provider
+            android:name=".data.GameProvider"
+            android:authorities="com.example.android.games"
+            android:exported="false" />
+    </application>
 </manifest>

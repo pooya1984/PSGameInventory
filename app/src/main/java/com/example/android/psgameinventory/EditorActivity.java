@@ -83,7 +83,6 @@ public class EditorActivity extends AppCompatActivity implements
         mQuantityEditText = (EditText) findViewById(R.id.edit_game_quantity);
         mGenreSpinner = (Spinner) findViewById(R.id.spinner_genre);
 
-
         mNameEditText.setOnTouchListener(mTouchListener);
         mConsoleSpinner.setOnTouchListener(mTouchListener);
         mQuantityEditText.setOnTouchListener(mTouchListener);
@@ -91,8 +90,6 @@ public class EditorActivity extends AppCompatActivity implements
 
         setupSpinner();
     }
-
-
     private void setupSpinner() {
         ArrayAdapter genreSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.array_genre_options, android.R.layout.simple_spinner_item);
@@ -101,7 +98,6 @@ public class EditorActivity extends AppCompatActivity implements
 
         genreSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         consoleSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-
 
         mGenreSpinner.setAdapter(genreSpinnerAdapter);
         mGenreSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -158,7 +154,6 @@ public class EditorActivity extends AppCompatActivity implements
         });
     }
 
-
     private void saveGame() {
         String nameString = mNameEditText.getText().toString().trim();
         String quantityString = mQuantityEditText.getText().toString().trim();
@@ -168,7 +163,6 @@ public class EditorActivity extends AppCompatActivity implements
                 mGenre == GameEntry.GENRE_UNKNOWN  && mConsole == GameEntry.CONSOLE_UNKNOWN) {
             return;
         }
-
         // Create a ContentValues object where column names are the keys,
         // and pet attributes from the editor are the values.
         ContentValues values = new ContentValues();
@@ -182,7 +176,6 @@ public class EditorActivity extends AppCompatActivity implements
             quantity = Integer.parseInt(quantityString);
         }
         values.put(GameEntry.COLUMN_GAME_STOCK, quantity);
-
         // Determine if this is a new or existing pet by checking if mCurrentGAMEUri is null or not
         if (mCurrentGAMEUri == null) {
             Uri newUri = getContentResolver().insert(GameEntry.CONTENT_URI, values);
@@ -212,7 +205,6 @@ public class EditorActivity extends AppCompatActivity implements
         getMenuInflater().inflate(R.menu.menu_editor, menu);
         return true;
     }
-
     /**
      * This method is called after invalidateOptionsMenu(), so that the
      * menu can be updated (some menu items can be hidden or made visible).
@@ -225,8 +217,7 @@ public class EditorActivity extends AppCompatActivity implements
             MenuItem menuItem = menu.findItem(R.id.action_delete);
             menuItem.setVisible(false);
         }
-        return true;
-    }
+        return true;}
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -256,7 +247,6 @@ public class EditorActivity extends AppCompatActivity implements
                 showUnsavedChangesDialog(discardButtonClickListener);
                 return true;}
         return super.onOptionsItemSelected(item);}
-
 
     @Override
     public void onBackPressed() {
@@ -412,6 +402,4 @@ public class EditorActivity extends AppCompatActivity implements
             }
         }
         finish();
-    }
-
-}
+    }}

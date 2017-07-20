@@ -41,7 +41,6 @@ public class GameCursorAdapter extends CursorAdapter {
         if (TextUtils.isEmpty(gameStock)) {
             gameStock = context.getString(R.string.unknown_stock);
         }
-
         // Update the TextViews with the attributes for the current pet
         nameTextView.setText(gameName);
         summaryTextView.setText(gameStock);
