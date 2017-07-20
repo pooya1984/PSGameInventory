@@ -97,8 +97,6 @@
         </LinearLayout>
     </LinearLayout>
 
-
-
     <!-- Console category -->
     <LinearLayout
         android:id="@+id/container_console"
