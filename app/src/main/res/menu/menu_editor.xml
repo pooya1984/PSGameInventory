@@ -12,6 +12,6 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/action_delete"
-        android:title="@string/action_delete"
+        android:title="@string/action_sale"
         app:showAsAction="never" />
 </menu>
