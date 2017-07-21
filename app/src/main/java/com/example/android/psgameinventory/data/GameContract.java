@@ -11,6 +11,7 @@ public final class GameContract {
 
     private GameContract() {}
 
+
     public static final String CONTENT_AUTHORITY = "com.example.android.games";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
@@ -29,6 +30,8 @@ public final class GameContract {
 
         /** Name of database table for games */
         public final static String TABLE_NAME = "games";
+
+
 
         /**
          * Unique ID number for the pet (only for use in the database table).
@@ -96,7 +99,7 @@ public final class GameContract {
                 return true;
             }
             return false;
-        }
-    }
+        }}
+
 
 }

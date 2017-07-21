@@ -72,7 +72,7 @@ public class CatalogActivity extends AppCompatActivity implements
         ContentValues values = new ContentValues();
         values.put(GameEntry.COLUMN_GAME_NAME, "The Last Of Us");
         values.put(GameEntry.COLUMN_GAME_STOCK, 7);
-        values.put(GameEntry.COLUMN_GAME_PRICE,20+"$");
+        values.put(GameEntry.COLUMN_GAME_PRICE,20);
         values.put(GameEntry.COLUMN_GAME_GENRE,GameEntry.GENRE_ADVENTURE);
         values.put(GameEntry.COLUMN_GAME_CONSOLE, GameEntry.CONSOLE_PS4);
 
