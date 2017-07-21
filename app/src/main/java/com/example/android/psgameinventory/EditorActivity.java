@@ -1,5 +1,7 @@
 package com.example.android.psgameinventory;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.ContentValues;
@@ -7,27 +9,55 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.psgameinventory.data.GameContract.GameEntry;
 
+import java.io.FileDescriptor;
+import java.io.IOException;
+import java.text.NumberFormat;
+
 
 public class EditorActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
+
+    int quantity=0;
+
+    private static final String LOG_TAG = CatalogActivity.class.getSimpleName();
+    private static final int PICK_IMAGE_REQUEST = 0;
+    private static final int MY_PERMISSIONS_REQUEST = 2;
+    private ImageView mImageView;
+    private Uri myUri;
+    private Bitmap mBitmap;
+    private String mUri = "noImages";
+
+
 
     private static final int EXISTING_GAME_LOADER = 0;
 
@@ -40,8 +70,11 @@ public class EditorActivity extends AppCompatActivity implements
     /** EditText field to enter the game's console */
     private Spinner mConsoleSpinner;
 
-    /** EditText field to enter the game's quantity */
-    private EditText mQuantityEditText;
+    /** TextView field to enter the game's quantity */
+    private TextView mQuantityEditText;
+
+    /** TextView field to enter the game's quantity */
+    private TextView mPriceTextView;
 
     /** EditText field to enter the game's genre */
     private Spinner mGenreSpinner;
@@ -62,10 +95,27 @@ public class EditorActivity extends AppCompatActivity implements
         }
     };
 
+    private boolean isGalleryPicture = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
+
+        mImageView = (ImageView) findViewById(R.id.product_photo);
+        mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {openImageSelector(view);}
+        });
+        ViewTreeObserver viewTreeObserver = mImageView.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+            @Override
+            public void onGlobalLayout() {
+                mImageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+
 
         Intent intent = getIntent();
         mCurrentGAMEUri = intent.getData();
@@ -80,16 +130,47 @@ public class EditorActivity extends AppCompatActivity implements
 
         mNameEditText = (EditText) findViewById(R.id.edit_game_name);
         mConsoleSpinner = (Spinner) findViewById(R.id.spinner_console);
-        mQuantityEditText = (EditText) findViewById(R.id.edit_game_quantity);
+        mQuantityEditText = (TextView) findViewById(R.id.edit_game_quantity);
+        mPriceTextView = (TextView) findViewById(R.id.order_summary_text_view);
         mGenreSpinner = (Spinner) findViewById(R.id.spinner_genre);
 
         mNameEditText.setOnTouchListener(mTouchListener);
         mConsoleSpinner.setOnTouchListener(mTouchListener);
         mQuantityEditText.setOnTouchListener(mTouchListener);
+        mPriceTextView.setOnTouchListener(mTouchListener);
         mGenreSpinner.setOnTouchListener(mTouchListener);
 
         setupSpinner();
     }
+
+    /**
+     * This method is called when the plus button is clicked.
+     */
+    public void increment(View view) {
+        quantity = quantity + 1;
+        if (quantity==100){
+            return;
+        }
+        displayquantity(quantity);
+        displayPrice(quantity * 5);
+    }
+
+    /**
+     * This method is called when the minus button is clicked.
+     */
+    public void decrement(View view) {
+
+        if (quantity < 1) {
+            // Show an error message as a toast
+            Toast.makeText(this, "You cannot have less than 1 coffee", Toast.LENGTH_SHORT).show();
+            // Exit this method early because there's nothing left to do
+            return;
+        }
+        quantity = quantity - 1;
+        displayquantity(quantity);
+        displayPrice(quantity * 5);
+    }
+
     private void setupSpinner() {
         ArrayAdapter genreSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.array_genre_options, android.R.layout.simple_spinner_item);
@@ -157,9 +238,12 @@ public class EditorActivity extends AppCompatActivity implements
     private void saveGame() {
         String nameString = mNameEditText.getText().toString().trim();
         String quantityString = mQuantityEditText.getText().toString().trim();
+        String priceString = mPriceTextView.getText().toString().trim();
+        mUri = String.valueOf(myUri);
+
 
         if (mCurrentGAMEUri == null &&
-                TextUtils.isEmpty(nameString) && TextUtils.isEmpty(quantityString)&&
+                TextUtils.isEmpty(nameString) && TextUtils.isEmpty(quantityString)&&TextUtils.isEmpty(priceString)&&
                 mGenre == GameEntry.GENRE_UNKNOWN  && mConsole == GameEntry.CONSOLE_UNKNOWN) {
             return;
         }
@@ -176,6 +260,14 @@ public class EditorActivity extends AppCompatActivity implements
             quantity = Integer.parseInt(quantityString);
         }
         values.put(GameEntry.COLUMN_GAME_STOCK, quantity);
+
+        // integer value. Use 0 by default.
+        int price = 0;
+        if (!TextUtils.isEmpty(priceString)) {
+            price = Integer.parseInt(priceString);
+        }
+        values.put(GameEntry.COLUMN_GAME_PRICE, price);
+
         // Determine if this is a new or existing pet by checking if mCurrentGAMEUri is null or not
         if (mCurrentGAMEUri == null) {
             Uri newUri = getContentResolver().insert(GameEntry.CONTENT_URI, values);
@@ -194,6 +286,109 @@ public class EditorActivity extends AppCompatActivity implements
             } else {
                 Toast.makeText(this, getString(R.string.editor_update_game_successful),
                         Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void requestPermissions() {
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) ||
+                    ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            mImageView.setEnabled(true);
+        }
+    }
+
+    public void openImageSelector(View view) {
+        Intent intent;
+        Log.e(LOG_TAG, "While is set and the ifs are worked through.");
+
+        if (Build.VERSION.SDK_INT < 19) {
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+        } else {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+        }
+
+        // Show only images, no videos or anything else
+        Log.e(LOG_TAG, "Check write to external permissions");
+
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    // Save the activity state when it's going to stop.
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable("picUri", myUri);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        Log.i(LOG_TAG, "Received an \"Activity Result\"");
+        // The ACTION_OPEN_DOCUMENT intent was sent with the request code READ_REQUEST_CODE.
+        // If the request code seen here doesn't match, it's the response to some other intent,
+        // and the below code shouldn't run at all.
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            // The document selected by the user won't be returned in the intent.
+            // Instead, a URI to that document will be contained in the return intent
+            // provided to this method as a parameter.  Pull that uri using "resultData.getData()"
+
+            if (resultData != null) {
+                myUri = resultData.getData();
+                Log.i(LOG_TAG, "Uri: " + myUri.toString());
+
+                mBitmap = getBitmapFromUri(myUri);
+                mImageView.setImageBitmap(mBitmap);
+
+                isGalleryPicture = true;
+            }
+        }
+    }
+
+    private Bitmap getBitmapFromUri(Uri uri) {
+        ParcelFileDescriptor parcelFileDescriptor = null;
+        try {
+            parcelFileDescriptor =
+                    getContentResolver().openFileDescriptor(uri, "r");
+            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+            Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+            parcelFileDescriptor.close();
+            return image;
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Failed to load image.", e);
+            return null;
+        } finally {
+            try {
+                if (parcelFileDescriptor != null) {
+                    parcelFileDescriptor.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(LOG_TAG, "Error closing ParcelFile Descriptor");
             }
         }
     }
@@ -267,7 +462,9 @@ public class EditorActivity extends AppCompatActivity implements
                 GameEntry.COLUMN_GAME_NAME,
                 GameEntry.COLUMN_GAME_GENRE,
                 GameEntry.COLUMN_GAME_CONSOLE,
-                GameEntry.COLUMN_GAME_STOCK };
+                GameEntry.COLUMN_GAME_PRICE,
+                GameEntry.COLUMN_GAME_STOCK,
+                GameEntry.COLUMN_GAME_NAME};
 
         return new CursorLoader(this,   // Parent activity context
                 mCurrentGAMEUri,         // Query the content URI for the current pet
@@ -289,15 +486,22 @@ public class EditorActivity extends AppCompatActivity implements
             int genreColumnIndex = cursor.getColumnIndex(GameEntry.COLUMN_GAME_GENRE);
             int consoleColumnIndex = cursor.getColumnIndex(GameEntry.COLUMN_GAME_CONSOLE);
             int quantityColumnIndex = cursor.getColumnIndex(GameEntry.COLUMN_GAME_STOCK);
+            int priceColumnIndex = cursor.getColumnIndex (GameEntry.COLUMN_GAME_PRICE);
+            int imageColumnIndex = cursor.getColumnIndex(GameEntry.COLUMN_GAME_IMAGE);
 
             String name = cursor.getString(nameColumnIndex);
             int genre = cursor.getInt(genreColumnIndex);
             int console = cursor.getInt(consoleColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
+            int price = cursor.getInt(priceColumnIndex);
+            mUri = cursor.getString(imageColumnIndex);
 
             // Update the views on the screen with the values from the database
             mNameEditText.setText(name);
             mQuantityEditText.setText(Integer.toString(quantity));
+            mPriceTextView.setText(Integer.toString(price));
+            mImageView.setImageURI(Uri.parse(mUri));
+
 
 
             switch (console) {
@@ -345,7 +549,9 @@ public class EditorActivity extends AppCompatActivity implements
         mNameEditText.setText("");
         mGenreSpinner.setSelection(0); //select "unknown" genre
         mQuantityEditText.setText("");
+        mPriceTextView.setText("");
         mConsoleSpinner.setSelection(0); // Select "Unknown" console
+        mImageView.setImageURI(myUri);
     }
 
     private void showUnsavedChangesDialog(
@@ -402,4 +608,19 @@ public class EditorActivity extends AppCompatActivity implements
             }
         }
         finish();
-    }}
+    }
+
+    /**
+     * This method displays the given quantity value on the screen.
+     */
+    private void displayquantity(int effect) {
+        TextView quantityTextView = (TextView) findViewById(
+                R.id.edit_game_quantity);
+        quantityTextView.setText("" + effect);
+    }
+
+    private void displayPrice(int number) {
+        TextView priceTextView = (TextView) findViewById(R.id.order_summary_text_view);
+        priceTextView.setText(NumberFormat.getCurrencyInstance().format(number));
+    }
+}

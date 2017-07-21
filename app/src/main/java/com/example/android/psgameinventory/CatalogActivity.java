@@ -29,6 +29,8 @@ public class CatalogActivity extends AppCompatActivity implements
     /** Adapter for the ListView */
     GameCursorAdapter mCursorAdapter;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,10 +72,13 @@ public class CatalogActivity extends AppCompatActivity implements
         ContentValues values = new ContentValues();
         values.put(GameEntry.COLUMN_GAME_NAME, "The Last Of Us");
         values.put(GameEntry.COLUMN_GAME_STOCK, 7);
+        values.put(GameEntry.COLUMN_GAME_PRICE,20+"$");
         values.put(GameEntry.COLUMN_GAME_GENRE,GameEntry.GENRE_ADVENTURE);
         values.put(GameEntry.COLUMN_GAME_CONSOLE, GameEntry.CONSOLE_PS4);
 
-        Uri newUri = getContentResolver().insert(GameEntry.CONTENT_URI, values);
+
+        getContentResolver().insert(GameEntry.CONTENT_URI, values);
+
     }
     private void deleteAllGames() {
         int rowsDeleted = getContentResolver().delete(GameEntry.CONTENT_URI, null, null);
@@ -112,6 +117,7 @@ public class CatalogActivity extends AppCompatActivity implements
                 GameEntry.COLUMN_GAME_CONSOLE,
                 GameEntry.COLUMN_GAME_GENRE,
                 GameEntry.COLUMN_GAME_NAME,
+                GameEntry.COLUMN_GAME_PRICE,
                 GameEntry.COLUMN_GAME_STOCK };
 
         // This loader will execute the ContentProvider's query method on a background thread

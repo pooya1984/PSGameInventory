@@ -24,8 +24,21 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
         android:textAppearance="?android:textAppearanceSmall"
-        android:text="@string/USD"
+        android:textColor="#AEB6BD"  />
+    <TextView
+        android:id="@+id/price_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:textAppearance="?android:textAppearanceSmall"
         android:textColor="#AEB6BD"  /></LinearLayout>
+
+    <ImageView
+        android:id="@+id/game_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher"
+        android:layout_centerHorizontal="true"/>
 
 <LinearLayout
     android:layout_width="wrap_content"
@@ -44,6 +57,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
-        android:text="@string/USD"
         android:textColor="#AEB6BD"  /></LinearLayout>
 </RelativeLayout>

@@ -1,25 +1,29 @@
 package com.example.android.psgameinventory;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.psgameinventory.data.GameContract.GameEntry;
 
 import static com.example.android.psgameinventory.R.id.console;
+import static com.example.android.psgameinventory.R.id.game_image;
+import static com.example.android.psgameinventory.R.id.price_view;
 
 public class GameCursorAdapter extends CursorAdapter {
 
     public GameCursorAdapter(Context context, Cursor c) {
         super(context, c, 0 /* flags */);
     }
-
-    private String GenreString;
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -33,22 +37,31 @@ public class GameCursorAdapter extends CursorAdapter {
         TextView summaryTextView = (TextView) view.findViewById(R.id.summary);
         TextView genreTextView = (TextView) view.findViewById(R.id.genre);
         TextView consoleTextView= (TextView)view.findViewById(console);
+        TextView priceTextView= (TextView)view.findViewById(price_view);
+        ImageView gameImageView=(ImageView)view.findViewById(game_image);
 
 
         // Find the columns of pet attributes that we're interested in
         int nameColumnIndex = cursor.getColumnIndex(GameEntry.COLUMN_GAME_NAME);
         int gameColumnIndex = cursor.getColumnIndex(GameEntry.COLUMN_GAME_STOCK);
+        int priceColumnIndex = cursor.getColumnIndex(GameEntry.COLUMN_GAME_PRICE);
         int genreColumnIndex=cursor.getColumnIndex(GameEntry.COLUMN_GAME_GENRE);
         int consoleColumnIndex=cursor.getColumnIndex(GameEntry.COLUMN_GAME_CONSOLE);
+        int imageColumnIndex=cursor.getColumnIndex(GameEntry.COLUMN_GAME_IMAGE);
+
+
 
         // Read the pet attributes from the Cursor for the current pet
         String gameName = cursor.getString(nameColumnIndex);
         String gameStock = cursor.getString(gameColumnIndex);
+        String gamePrice = cursor.getString(priceColumnIndex);
         String genre = cursor.getString(genreColumnIndex);
         String console = cursor.getString(consoleColumnIndex);
+        Uri gameImage = Uri.parse(cursor.getString(imageColumnIndex));
 
         String GenreString="";
         String ConsoleString="";
+
 
         switch (Integer.parseInt(genre)) {
             case 1: GenreString = context.getString(R.string.SCI_FI);break;
@@ -67,10 +80,13 @@ public class GameCursorAdapter extends CursorAdapter {
         }
 
         if (TextUtils.isEmpty(gameStock)) {
-            gameStock = context.getString(R.string.unknown_Price);}
+            gameStock = context.getString(R.string.unknown_stock);
+            gamePrice = context.getString(R.string.unknown_Price);}
         // Update the TextViews with the attributes for the current pet
         nameTextView.setText(gameName);
         summaryTextView.setText(gameStock);
+        priceTextView.setText(gamePrice);
         genreTextView.setText(GenreString);
         consoleTextView.setText(ConsoleString);
+        gameImageView.setImageResource(gameImage);
     }}

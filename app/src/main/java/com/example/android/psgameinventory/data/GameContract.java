@@ -41,6 +41,10 @@ public final class GameContract {
 
         public final static String COLUMN_GAME_STOCK = "quantity";
 
+        public final static String COLUMN_GAME_PRICE = "price";
+
+        public final static String COLUMN_GAME_IMAGE = "IMAGE";
+
         /**
          * Gender of the console.
          * Type: INTEGER
